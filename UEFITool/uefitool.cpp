@@ -658,13 +658,13 @@ void UEFITool::saveImageFile()
 
 void UEFITool::openImageFile()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open BIOS image file"), openImageDir, tr("BIOS image files (*.rom *.bin *.cap *.scap *.bio *.fd *.wph *.dec);;All files (*)"));
+    QString path = QFileDialog::getOpenFileName(this, tr("Open BIOS image file"), openImageDir, tr("BIOS image files (*.rom *.bin *.cap *.scap *.bio *.fd *.wph *.dec *.depex);;All files (*)"));
     openImageFile(path);
 }
 
 void UEFITool::openImageFileInNewWindow()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open BIOS image file in new window"), openImageDir, tr("BIOS image files (*.rom *.bin *.cap *.scap *.bio *.fd *.wph *.dec);;All files (*)"));
+    QString path = QFileDialog::getOpenFileName(this, tr("Open BIOS image file in new window"), openImageDir, tr("BIOS image files (*.rom *.bin *.cap *.scap *.bio *.fd *.wph *.dec *.depex);;All files (*)"));
     if (path.trimmed().isEmpty())
         return;
     QProcess::startDetached(currentProgramPath, QStringList(path));
@@ -709,7 +709,12 @@ void UEFITool::openImageFile(QString path)
     setWindowTitle(tr("UEFITool %1 - %2").arg(version).arg(fileInfo.fileName()));
     
     // Parse the image
-    USTATUS result = ffsParser->parse(buffer);
+    USTATUS result;
+    if (fileInfo.suffix() == "depex") {
+        result = ffsParser->parseDepex(buffer);
+    } else {
+        result = ffsParser->parse(buffer);
+    }
     showParserMessages();
     if (result) {
         QMessageBox::critical(this, tr("Image parsing failed"), errorCodeToUString(result), QMessageBox::Ok);

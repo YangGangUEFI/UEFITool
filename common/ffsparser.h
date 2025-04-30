@@ -87,6 +87,9 @@ public:
 
     // Parse firmware image
     USTATUS parse(const UByteArray &buffer);
+
+    // Parse depex
+    USTATUS parseDepex(const UByteArray & depex);
     
     // Obtain parsed FIT table
     std::vector<std::pair<std::vector<UString>, UModelIndex> > getFitTable() const;

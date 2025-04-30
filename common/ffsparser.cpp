@@ -664,6 +664,20 @@ USTATUS FfsParser::parseIntelImage(const UByteArray & intelImage, const UINT32 l
     return parseResult;
 }
 
+USTATUS FfsParser::parseDepex(const UByteArray & depex)
+{
+    UModelIndex root;
+
+    // Parse as generic UEFI depex
+    UString name("UEFI depex");
+    UString info = usprintf("Full size: %Xh (%u)", (UINT32)depex.size(), (UINT32)depex.size());
+    
+    // Add tree item
+    root = model->addItem(0, Types::Image, Subtypes::UefiImage, name, UString(), info, UByteArray(), depex, UByteArray(), Fixed, UModelIndex());
+    
+    return parseDepexSectionBody(root);
+}
+
 USTATUS FfsParser::parseGbeRegion(const UByteArray & gbe, const UINT32 localOffset, const UModelIndex & parent, UModelIndex & index)
 {
     // Check sanity
